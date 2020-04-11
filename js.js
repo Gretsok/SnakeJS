@@ -3,7 +3,11 @@ var ctx = canvas.getContext('2d');
 ctx.fillStyle = "#00FF00";
 
 let gameRunning = false;
-document.getElementById("youdead").hidden= true;;
+document.getElementById("youdead").hidden= true;
+
+
+
+
 
 
 let EMPTY = 0;
@@ -14,6 +18,8 @@ let snakeBody = [];
 
 //player stats
 let score = 0;
+let scoreDisplay = document.getElementById("score");
+scoreDisplay.hidden=true;
 
 // Snake movements boolean
 let goesUp = false;
@@ -238,6 +244,8 @@ function gameplay()
         else if(WORLD[snakeHead[0]][snakeHead[1]-1] === FOOD)
         {
             spawnFood();
+            score = score+1;
+            scoreDisplay.textContent = " Score : " + score;
         }
         else
         {
@@ -261,6 +269,8 @@ function gameplay()
         else if(WORLD[snakeHead[0]][snakeHead[1]+1] === FOOD)
         {
             spawnFood();
+            score = score+1;
+            scoreDisplay.textContent = " Score : " + score;
         }
         else
         {
@@ -287,6 +297,8 @@ function gameplay()
         else if(WORLD[snakeHead[0]+1][snakeHead[1]] === FOOD)   
         {
             spawnFood();
+            score = score+1;
+            scoreDisplay.textContent = " Score : " + score;
         }
         else
         {
@@ -313,6 +325,8 @@ function gameplay()
         else if(WORLD[snakeHead[0]-1][snakeHead[1]] === FOOD)
         {
             spawnFood();
+            score = score+1;
+            scoreDisplay.textContent = " Score : " + score;
         }
         else
         {
@@ -407,6 +421,7 @@ window.addEventListener('hashchange', function(){
         document.getElementById("menu").hidden = true;
         //Display Game
         canvas.hidden = false;
+        scoreDisplay.hidden=true;
         LoadLevel(level);
         draw();
         console.log("truc");
