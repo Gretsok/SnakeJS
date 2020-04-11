@@ -3,6 +3,8 @@ var ctx = canvas.getContext('2d');
 ctx.fillStyle = "#00FF00";
 
 let gameRunning = false;
+document.getElementById("youdead").hidden= true;;
+
 
 let EMPTY = 0;
 let FOOD = 1;
@@ -18,7 +20,7 @@ let goesUp = false;
 let goesDown = false;
 let goesRight = false;
 let goesLeft = false;
-let snakeDirection = "D";
+let snakeDirection = "L";
 
 //ctx.fillRect(canvas.width/4, canvas.height/4, 10, 10);
 let delay = 1000;
@@ -193,128 +195,133 @@ function spawnFood()
 }
 
 function die()
-{
+{   
+    document.getElementById("youdead").hidden = false;
+
     gameRunning=false;
+    console.log("Youre dead");
 }
 
 function gameplay()
 {
     let snakeHead = snakeBody[0];
     let snakeTail = snakeBody[snakeBody.length-1];
-
-    if(goesUp)
-    {
-        if(WORLD[snakeHead[0]][snakeHead[1]-1] === EMPTY)
-        {
-            snakeDirection = "U";
-        }
-    }
-    if(goesDown)
-    {
-        if(WORLD[snakeHead[0]][snakeHead[1]+1] === EMPTY)
-        {
-            snakeDirection = "D";
-        }
-    }
-    if(goesRight)
-    {
-        if(WORLD[snakeHead[0]+1][snakeHead[1]] === EMPTY)
-        {
-            snakeDirection = "R";
-        }
-    }
-    if(goesLeft)
-    {
-        if(WORLD[snakeHead[0]-1][snakeHead[1]] === EMPTY)
-        {
-            snakeDirection = "L";
-        }
-    }
     
+    if(goesUp && snakeDirection != "D")
+    {
+        snakeDirection = "U";
+    }
+    if(goesDown && snakeDirection != "U")
+    {
+        snakeDirection="D";
+    }
+    if(goesLeft && snakeDirection != "R")
+    {
+        snakeDirection="L";
+    }
+    if(goesRight && snakeDirection != "L")
+    {
+        snakeDirection="R";
+    }
 
+    //console.log(snakeDirection + "goesUp: " + goesUp + " goesDown: "+ goesDown + " goesLeft: " + goesLeft + " goesRight : " + goesRight);
     if(snakeDirection === "U")
     {
-        if(WORLD[snakeHead[0]][snakeHead[1]-1] != SNAKE)
-        {
-            if(WORLD[snakeHead[0]][snakeHead[1]-1] != FOOD)
-            {
-                WORLD[snakeTail[0]][snakeTail[1]] = EMPTY;
-                snakeBody.pop(); 
-            }
-            else
-            {
-                spawnFood();
-            }
-            WORLD[snakeHead[0]][snakeHead[1]-1] = SNAKE;
-            
-            newPos = [snakeHead[0], snakeHead[1]-1];
-            snakeBody.unshift(newPos);
-            goesUp = false;
-            
-        }
+
         
+        //goesUp = false;
+        if(WORLD[snakeHead[0]][snakeHead[1]-1] === EMPTY)
+        {
+            WORLD[snakeTail[0]][snakeTail[1]] = EMPTY;
+            snakeBody.pop(); 
+        }
+        else if(WORLD[snakeHead[0]][snakeHead[1]-1] === FOOD)
+        {
+            spawnFood();
+        }
+        else
+        {
+            die();
+        }
+        //Il se déplace
+        WORLD[snakeHead[0]][snakeHead[1]-1] = SNAKE;
+        newPos = [snakeHead[0], snakeHead[1]-1];
+        snakeBody.unshift(newPos);
     }
+
     if(snakeDirection === "D")
     {
-        if(WORLD[snakeHead[0]][snakeHead[1]+1] != SNAKE)
-        {
-            if(WORLD[snakeHead[0]][snakeHead[1]+1] != FOOD)
-            {
-                WORLD[snakeTail[0]][snakeTail[1]] = EMPTY;
-                snakeBody.pop();
-            }
-            else
-            {
-                spawnFood();
-            }
-            WORLD[snakeHead[0]][snakeHead[1]+1] = SNAKE;
-            newPos = [snakeHead[0], snakeHead[1]+1];
-            snakeBody.unshift(newPos);
-            goesDown = false;
-        }
 
+        //goesDown = false;
+        if(WORLD[snakeHead[0]][snakeHead[1]+1] === EMPTY)
+        {
+            WORLD[snakeTail[0]][snakeTail[1]] = EMPTY;
+            snakeBody.pop(); 
+        }
+        else if(WORLD[snakeHead[0]][snakeHead[1]+1] === FOOD)
+        {
+            spawnFood();
+        }
+        else
+        {
+            die();
+        }
+        //Il se déplace
+        WORLD[snakeHead[0]][snakeHead[1]+1] = SNAKE;
+        newPos = [snakeHead[0], snakeHead[1]+1];
+        snakeBody.unshift(newPos);
+        
+    }
+    if(snakeDirection === "R")
+    {        
+        if(snakeHead[0]+1 >= WORLD.length-1)
+        {
+            die();
+        }
+        //goesRight = false;
+        if(WORLD[snakeHead[0]+1][snakeHead[1]] === EMPTY)
+        {
+            WORLD[snakeTail[0]][snakeTail[1]] = EMPTY;
+            snakeBody.pop(); 
+        }
+        else if(WORLD[snakeHead[0]+1][snakeHead[1]] === FOOD)   
+        {
+            spawnFood();
+        }
+        else
+        {
+            die();
+        }
+        //Il se déplace
+        WORLD[snakeHead[0]+1][snakeHead[1]]  = SNAKE;
+        newPos = [snakeHead[0]+1, snakeHead[1]] ;
+        snakeBody.unshift(newPos);
         
     }
     if(snakeDirection === "L")
     {
-        if(WORLD[snakeHead[0]-1][snakeHead[1]] != SNAKE)
-        {
-            if(WORLD[snakeHead[0]-1][snakeHead[1]] != FOOD)
-            {
-                WORLD[snakeTail[0]][snakeTail[1]] = EMPTY;
-                snakeBody.pop();
-            }
-            else
-            {
-                spawnFood();
-            }
-            WORLD[snakeHead[0]-1][snakeHead[1]] = SNAKE;
-            newPos = [snakeHead[0]-1, snakeHead[1]];
-            snakeBody.unshift(newPos);
-            goesLeft = false;
-        }
 
-        
-    }
-    
-    if(snakeDirection === "R")
-    {
-        if(WORLD[snakeHead[0]+1][snakeHead[1]] != SNAKE)
+        if(snakeHead[0]-1 <= 0)
         {
-            if(WORLD[snakeHead[0]+1][snakeHead[1]] != FOOD)
-            {
-                WORLD[snakeTail[0]][snakeTail[1]] = EMPTY;
-                snakeBody.pop();
-            }
-            else
-            {
-                spawnFood();
-            }
-            WORLD[snakeHead[0]+1][snakeHead[1]] = SNAKE;
-            newPos = [snakeHead[0]+1, snakeHead[1]];
-            snakeBody.unshift(newPos);
-            goesRight = false;
+            die();
         }
+        if(WORLD[snakeHead[0]-1][snakeHead[1]] === EMPTY)
+        {
+            WORLD[snakeTail[0]][snakeTail[1]]  = EMPTY;
+            snakeBody.pop(); 
+        }
+        else if(WORLD[snakeHead[0]-1][snakeHead[1]] === FOOD)
+        {
+            spawnFood();
+        }
+        else
+        {
+            die();
+        }
+         //Il se déplace
+         WORLD[snakeHead[0]-1][snakeHead[1]]  = SNAKE;
+         newPos = [snakeHead[0]-1, snakeHead[1]] ;
+         snakeBody.unshift(newPos);
     }
     
     
@@ -329,7 +336,7 @@ function gameLoop()
         setTimeout(gameLoop, delay);
     }   
 }
-
+/*
 function start_loop() {
     if (!gameRunning) {
         gameRunning = true;
@@ -350,7 +357,7 @@ function step()
         setTimeout(step, delay);
     }   
 }
-
+*/
 //Initialisation
 let hashCode = window.location.hash;
 let hashSize = window.location.hash.length;
@@ -391,6 +398,7 @@ window.addEventListener('hashchange', function(){
         canvas.hidden = true;
         //Displaying menu
         document.getElementById("menu").hidden = false;
+        this.document.getElementById("youdead").hidden = true;
         gameRunning = false;
     }
     else
