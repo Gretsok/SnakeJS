@@ -5,9 +5,20 @@ ctx.fillStyle = "#00FF00";
 let gameRunning = false;
 document.getElementById("youdead").hidden= true;
 
+//Audio
+let music = new Audio("audio/elevatormusic.mp3");
+
+let fruitAudio =new Audio("audio/Son_Fruit.mp3");
+let deathAudio =new Audio("audio/Son_Mort.mp3");
 
 
+function playMusic()
+{
+    music.volume = 0.05;
+    music.play();
+}
 
+playMusic();
 
 
 let EMPTY = 0;
@@ -38,6 +49,7 @@ let WORLD = [
     [EMPTY, SNAKE, SNAKE, EMPTY, EMPTY, EMPTY],
     [EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY],
   ];
+let caseSize = 20;
 
 
 function LoadLevel(level)
@@ -54,9 +66,12 @@ function LoadLevel(level)
             let data = JSON.parse(req.responseText);
             // do what you have to do with 'data'
 
+            //size of cases
+            caseSize = data.caseSize;
+
             // Resizing canvas
-            canvas.width = data.dimensions[0]*10;
-            canvas.height = data.dimensions[1]*10;
+            canvas.width = data.dimensions[0]*caseSize;
+            canvas.height = data.dimensions[1]*caseSize;
 
             // Resizing the WORLD Array
             WORLD = Array(data.dimensions[0]);
@@ -105,6 +120,20 @@ function LoadLevel(level)
                 snakeBody[i] = data.snake[i];
 
             }
+
+            //Starting direction
+            let goesUp = false;
+            let goesDown = false;
+            let goesRight = false;
+            let goesLeft = false;
+            snakeDirection = data.startingDirection;
+
+            //score 
+            score = 0;
+            scoreDisplay.textContent="Score : 0";
+
+
+
             console.log(WORLD);
             console.log("level load successfully");
 
@@ -121,36 +150,36 @@ function LoadLevel(level)
 function draw()
 {
     ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, WORLD.length * 10, WORLD[0].length *10);
+    ctx.fillRect(0, 0, WORLD.length * caseSize, WORLD[0].length *caseSize);
     for(let i=0; i<WORLD.length ; i+=1)
     {
         for(let j=0; j<WORLD[0].length ; j+=1)
         {
             
             ctx.strokeStyle ="lightgrey";
-            ctx.strokeRect(i * 10, j * 10, 10, 10);
+            ctx.strokeRect(i * caseSize, j * caseSize, caseSize, caseSize);
 
             //console.log(WORLD[i][j] + " ");
 
             if(WORLD[i][j] === FOOD)
             {
                 ctx.fillStyle = "red";
-                ctx.fillRect(i * 10, j * 10, 10, 10);
+                ctx.fillRect(i * caseSize, j * caseSize, caseSize, caseSize);
             }
             else if(WORLD[i][j] === WALL)
             {
                 ctx.fillStyle = "black";
-                ctx.fillRect(i * 10, j * 10, 10, 10);
+                ctx.fillRect(i * caseSize, j * caseSize, caseSize, caseSize);
             }
             else if(WORLD[i][j] === SNAKE)
             {
                 ctx.fillStyle = "green";
-                ctx.fillRect(i * 10, j * 10, 10, 10);
+                ctx.fillRect(i * caseSize, j * caseSize, caseSize, caseSize);
             }
         }
-        //console.log("\n");
+        
     }
-    //console.log("pute");
+   
 }
 
 document.addEventListener('keydown', move);
@@ -190,6 +219,7 @@ function move(key)
 
 function spawnFood()
 {
+    fruitAudio.play();
     let x = Math.floor(Math.random()*WORLD.length);
     let y = Math.floor(Math.random()*WORLD[0].length);
     while(WORLD[x][y] != EMPTY)
@@ -203,7 +233,7 @@ function spawnFood()
 function die()
 {   
     document.getElementById("youdead").hidden = false;
-
+    deathAudio.play();
     gameRunning=false;
     console.log("Youre dead");
 }
@@ -380,21 +410,32 @@ for(let i = 1; i < hashSize; i+=1)
 {
     level += hashCode[i];
 }
-if(level === "0" || level === ""   )
+if(level === "0" || level == "")
 {
+
     //Hiding game
     canvas.hidden = true;
     //Displaying menu
     document.getElementById("menu").hidden = false;
+    this.document.getElementById("youdead").hidden = true;
+    scoreDisplay.hidden=true;
+
+    gameRunning = false;
 }
 else
 {
+ 
+    
+
     //Hide Menu
     document.getElementById("menu").hidden = true;
     //Display Game
+    scoreDisplay.hidden=false;
+
     canvas.hidden = false;
     LoadLevel(level);
     draw();
+    console.log("truc");
 }
 
 
@@ -408,20 +449,26 @@ window.addEventListener('hashchange', function(){
     }
     if(level === "0" || level == "")
     {
+
         //Hiding game
         canvas.hidden = true;
         //Displaying menu
         document.getElementById("menu").hidden = false;
         this.document.getElementById("youdead").hidden = true;
+        scoreDisplay.hidden=true;
+
         gameRunning = false;
     }
     else
     {
+
+
         //Hide Menu
         document.getElementById("menu").hidden = true;
         //Display Game
+        scoreDisplay.hidden=false;
+
         canvas.hidden = false;
-        scoreDisplay.hidden=true;
         LoadLevel(level);
         draw();
         console.log("truc");

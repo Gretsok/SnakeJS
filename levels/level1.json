@@ -11,6 +11,8 @@
       [60,30],
       [60,29],
       [60,28]
-    ]
+    ],
+    "startingDirection": "R",
+    "caseSize": 15
 
 }

@@ -3,6 +3,11 @@ body
     background-color: darkslategrey;
 }
 
+a
+{
+    text-decoration: none;
+}
+
 h1
 {
     text-align: center;
@@ -55,7 +60,13 @@ img
     border:3px solid greenyellow;
 }
 
+#score
+{
+    text-align: center;
+    color: white;
+    font-size: 25px;
 
+}
 #youdead
 {
 
